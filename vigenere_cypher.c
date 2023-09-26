@@ -138,10 +138,13 @@ void main() {
     bool running = true;
     char newline;
     while (running){
-        printf("Type 1 to cypher a message and 2 to decypher it: ");
+        printf("1)Cypher a message with a key\n"
+                "2)Decypher message with a key\n"
+                "3)Decypher message without key\n\n"
+                "Choose an option: ");
         if (scanf("%d", &choice) != 1) {
             // Handle invalid input
-            printf("Invalid input. Please enter 1 or 2.\n");
+            printf("Invalid input. Please enter 1, 2 or 3.\n");
             continue;
         }
 
@@ -160,7 +163,7 @@ void main() {
                 kasiski();
                 break;
             default:
-                printf("Insira 1 ou 2!\n");
+                printf("Insira 1, 2 ou 3!\n");
                 break;
         }
     }
