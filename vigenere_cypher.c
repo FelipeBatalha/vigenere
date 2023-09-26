@@ -70,6 +70,50 @@ void cypher_menu(){
     free(message); free(key); free(key_string);
 }
 
+void trigram(char * cypher, size_t size){
+    int matches = 0;
+    for(int i = 0; i < size - 1; i++){
+        char a = cypher[i];
+        char b = cypher[i + 1];
+        char c = cypher[i + 2];
+        printf("%c%c%c\n", a, b, c);
+        for(int j = i + 3; j < size - 3; j++){
+            if(cypher[j] == a && cypher[j + 1] == b && cypher[j + 2] == c){
+                printf("%c%c%c\n", a, b, c);
+                matches++;
+            }
+        }
+    }
+    printf("%d\n", matches);
+}
+
+void digram(char * cypher, size_t size){
+    int matches = 0;
+    for(int i = 0; i < size - 1; i++){
+        char a = cypher[i];
+        char b = cypher[i + 1];
+        printf("%c%c\n", a, b);
+        for(int j = i + 2; j < size - 2; j++){
+            if(cypher[j] == a && cypher[j + 1] == b){
+                printf("%c%c\n",a,b);
+                matches++;
+            }
+        }
+    }
+    printf("%d\n", matches);
+}
+
+void kasiski(){
+    char *cypher = NULL;
+    size_t size = 0;
+    printf("Enter a cypher: ");
+    size_t string_size = getline(&cypher, &size, stdin);
+    printf("You entered: %s", cypher);
+
+    trigram(cypher,string_size);
+
+}
+
 void decypher_menu(){
     char *cypher = NULL;
     char *key = NULL;
@@ -111,6 +155,9 @@ void main() {
             case 2:
                 decypher_menu();
                 running = false;
+                break;
+            case 3:
+                kasiski();
                 break;
             default:
                 printf("Insira 1 ou 2!\n");
