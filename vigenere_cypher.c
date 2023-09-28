@@ -71,48 +71,65 @@ void cypher_menu(){
 }
 
 void trigram(char * cypher, size_t size){
-    int matches = 0;
     for(int i = 0; i < size - 1; i++){
         char a = cypher[i];
         char b = cypher[i + 1];
         char c = cypher[i + 2];
-        printf("%c%c%c\n", a, b, c);
+        //printf("%c%c%c\n", a, b, c);
         for(int j = i + 3; j < size - 3; j++){
             if(cypher[j] == a && cypher[j + 1] == b && cypher[j + 2] == c){
-                printf("%c%c%c\n", a, b, c);
-                matches++;
+                int distance = j - i;
+                //printf("%c%c%c\n", a, b, c);
+                printf("Distancia entre trigramas: %d\n", distance);
             }
         }
     }
-    printf("%d\n", matches);
+
 }
 
 void digram(char * cypher, size_t size){
-    int matches = 0;
     for(int i = 0; i < size - 1; i++){
         char a = cypher[i];
         char b = cypher[i + 1];
-        printf("%c%c\n", a, b);
+        //printf("%c%c\n", a, b);
         for(int j = i + 2; j < size - 2; j++){
             if(cypher[j] == a && cypher[j + 1] == b){
-                printf("%c%c\n",a,b);
-                matches++;
+                int distance = j - i;
+                //printf("%c%c\n",a,b);
+                printf("Distancia entre digramas: %d\n", distance);
             }
         }
     }
-    printf("%d\n", matches);
 }
 
 void kasiski(){
     char *cypher = NULL;
     size_t size = 0;
+    int key_size;
+
     printf("Enter a cypher: ");
     size_t string_size = getline(&cypher, &size, stdin);
     printf("You entered: %s", cypher);
 
-    trigram(cypher,string_size);
-
+    digram(cypher,string_size);
+    trigram(cypher, string_size);
+    printf("What do you think the size of the key is?\nAnswer: ");
+    scanf("%d", &key_size);
+    printf("Assuming key size %d ...\n", key_size);
+    int j;
+    for (int i = 0; i < string_size -1; i++){
+        // i could have a matrix of chars to mimick that resolution table huh
+        for(int j = i; j < j + 6 && j < string_size - 1; j++){
+            printf("%c", cypher[j]);
+        }
+        printf("\n");
+    }
+    //divide_cypher(cypher,);
+    
+    free(cypher);
 }
+    
+
 
 void decypher_menu(){
     char *cypher = NULL;
