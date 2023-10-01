@@ -71,6 +71,25 @@ void cypher_menu(){
 }
 
 void trigram(char * cypher, size_t size){
+    //char * trigram_list = (char *) malloc(size * sizeof(char));
+    for(int i = 0; i < size - 1; i++){
+        char a = cypher[i];
+        char b = cypher[i + 1];
+        char c = cypher[i + 2];
+        //printf("%c%c%c\n", a, b, c);
+        for(int j = i + 3; j < size - 3; j++){
+            if(cypher[j] == a && cypher[j + 1] == b && cypher[j + 2] == c){
+                int distance = j - i;
+                //printf("%c%c%c\n", a, b, c);
+                printf("Distancia entre trigramas: %d\n", distance);
+            }
+        }
+    }
+
+}
+
+void trigram_list(char * cypher, size_t size){
+    char * trigram_list = (char *) malloc(size * sizeof(char));
     for(int i = 0; i < size - 1; i++){
         char a = cypher[i];
         char b = cypher[i + 1];
@@ -116,14 +135,44 @@ void kasiski(){
     printf("What do you think the size of the key is?\nAnswer: ");
     scanf("%d", &key_size);
     printf("Assuming key size %d ...\n", key_size);
-    int j;
+
+    //printa colunas equivalentes a cada letra da chave
+    
     for (int i = 0; i < string_size -1; i++){
-        // i could have a matrix of chars to mimick that resolution table huh
-        for(int j = i; j < j + 6 && j < string_size - 1; j++){
-            printf("%c", cypher[j]);
+        if (i % key_size == 0){
+            printf("\n ");
         }
-        printf("\n");
+        printf(" %c  | ", cypher[i]);
     }
+    printf("\n");
+    for (int i = 0; i < key_size; i++){
+        printf("------");
+    }
+
+    printf("\n");
+
+    int letters[21] = {0};
+    int frequency[21] = {0};
+    for (int i = 0; i < key_size; i++){
+        int most_common_letter_quantity = 0;
+        int most_common_letter_index = 0;
+        for (int j = i; j < string_size -1; j += key_size){
+            int matches = 1;
+            for (int k = j + key_size; k < string_size -1; k += key_size){
+                if (cypher[j] == cypher[k]){
+                    matches++;
+                    if (matches > most_common_letter_quantity){
+                        most_common_letter_quantity = matches;
+                        most_common_letter_index = j;
+                    }
+                }
+
+            }
+            
+        }
+        printf("%d x %c|", most_common_letter_quantity, cypher[most_common_letter_index]);
+    }
+    printf("\n\n\n");
     //divide_cypher(cypher,);
     
     free(cypher);
