@@ -89,8 +89,7 @@ void trigram(char * cypher, size_t size){
 }
 
 void trigram_list(char * cypher, size_t size){
-    char * trigram_list = (char *) malloc(size * sizeof(char));
-    for(int i = 0; i < size - 1; i++){
+    for(int i = 0; i < size - 3; i++){
         char a = cypher[i];
         char b = cypher[i + 1];
         char c = cypher[i + 2];
@@ -98,27 +97,22 @@ void trigram_list(char * cypher, size_t size){
         for(int j = i + 3; j < size - 3; j++){
             if(cypher[j] == a && cypher[j + 1] == b && cypher[j + 2] == c){
                 int distance = j - i;
-                //printf("%c%c%c\n", a, b, c);
-                printf("Distancia entre trigramas: %d\n", distance);
+                printf("%c%c%c Distancia: %d (Divisores:", a, b, c, distance);
+                for(int k = 1; k < distance; k++){
+                    if (distance % k == 0){
+                        printf(" %d", k);
+                    }
+                }
+                printf(")\n");
+                //printf("Distancia entre trigramas: ", distance);
             }
         }
     }
-
-}
-
-void digram(char * cypher, size_t size){
-    for(int i = 0; i < size - 1; i++){
-        char a = cypher[i];
-        char b = cypher[i + 1];
-        //printf("%c%c\n", a, b);
-        for(int j = i + 2; j < size - 2; j++){
-            if(cypher[j] == a && cypher[j + 1] == b){
-                int distance = j - i;
-                //printf("%c%c\n",a,b);
-                printf("Distancia entre digramas: %d\n", distance);
-            }
-        }
-    }
+    /*for(int i = 0; i < size - 3; i++){
+        //if(trigram_list[i] != 0){
+            printf("Trigrama: %c%c%c Distancia: %d\n", cypher[i], cypher[i + 1], cypher[i + 2], trigram_list[i]);
+        //}
+    }*/
 }
 
 void kasiski(){
@@ -130,8 +124,7 @@ void kasiski(){
     size_t string_size = getline(&cypher, &size, stdin);
     printf("You entered: %s", cypher);
 
-    digram(cypher,string_size);
-    trigram(cypher, string_size);
+    trigram_list(cypher, string_size);
     printf("What do you think the size of the key is?\nAnswer: ");
     scanf("%d", &key_size);
     printf("Assuming key size %d ...\n", key_size);
@@ -173,6 +166,18 @@ void kasiski(){
         printf("%d x %c|", most_common_letter_quantity, cypher[most_common_letter_index]);
     }
     printf("\n\n\n");
+
+    double enLetterFrequencies[26] = {
+        0.0817, 0.0149, 0.0278, 0.0425, 0.1270, 0.0223, 0.0202, 0.0609, 0.0697, 0.0015,
+        0.0077, 0.0402, 0.0241, 0.0675, 0.0751, 0.0193, 0.0009, 0.0599, 0.0633, 0.0906,
+        0.0276, 0.0098, 0.0236, 0.0015, 0.0197, 0.0007
+    };
+
+    double ptletterFrequencies[26] = {
+        0.1463, 0.0104, 0.0388, 0.0499, 0.1257, 0.0102, 0.0130, 0.0130, 0.0618, 0.0041,
+        0.0002, 0.0278, 0.0474, 0.0505, 0.1073, 0.0252, 0.0120, 0.0653, 0.0781, 0.0434,
+        0.0463, 0.0167, 0.0001, 0.0021, 0.0001, 0.0047
+    };
     //divide_cypher(cypher,);
     
     free(cypher);
