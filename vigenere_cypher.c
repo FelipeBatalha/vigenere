@@ -127,7 +127,7 @@ char *decypher(char *cypher, char *key_string, size_t size)
     return message;
 }
 
-char *generate_key_string(char *key, size_t string_size, size_t key_size)
+char *generateKeyString(char *key, size_t string_size, size_t key_size)
 {
     int i, j;
     char *key_string = NULL;
@@ -144,7 +144,7 @@ char *generate_key_string(char *key, size_t string_size, size_t key_size)
     return key_string;
 }
 
-void cypher_menu()
+void cypherSetup()
 {
     char *message = NULL;
     char *key = NULL;
@@ -161,7 +161,7 @@ void cypher_menu()
     size_t key_size = getline(&key, &size, stdin);
     printf("You entered: %s", key);
 
-    char *key_string = generate_key_string(key, string_size, key_size);
+    char *key_string = generateKeyString(key, string_size, key_size);
     char *cyphertext = cypher(filteredStr, key_string, string_size);
     reintroduceSpecialChars(cyphertext, specialChars, numSpecialChars);
     printf("%s", cyphertext);
@@ -171,28 +171,7 @@ void cypher_menu()
     free(key_string);
 }
 
-void trigram(char *cypher, size_t size)
-{
-    // char * trigram_list = (char *) malloc(size * sizeof(char));
-    for (int i = 0; i < size - 1; i++)
-    {
-        char a = cypher[i];
-        char b = cypher[i + 1];
-        char c = cypher[i + 2];
-        // printf("%c%c%c\n", a, b, c);
-        for (int j = i + 3; j < size - 3; j++)
-        {
-            if (cypher[j] == a && cypher[j + 1] == b && cypher[j + 2] == c)
-            {
-                int distance = j - i;
-                // printf("%c%c%c\n", a, b, c);
-                printf("Distancia entre trigramas: %d\n", distance);
-            }
-        }
-    }
-}
-
-void trigram_list(char *cypher, size_t size)
+void trigramDistance(char *cypher, size_t size)
 {
     for (int i = 0; i < size - 3; i++)
     {
@@ -233,7 +212,7 @@ void kasiski()
     printf("You entered: %s", cyphertext);
     char *filteredStr = filterAndStoreSpecialChars(cyphertext, &specialChars, &numSpecialChars);
 
-    trigram_list(filteredStr, string_size);
+    trigramDistance(filteredStr, string_size);
     printf("What do you think the size of the key is?\nAnswer: ");
     scanf("%d", &key_size);
     printf("Assuming key size %d ...\n", key_size);
@@ -273,13 +252,6 @@ void kasiski()
         printf("Key letter %d: %c\n", j + 1, key[j]);
     }
 
-    // do you think the key is correct? if no, try another language and/or key size
-    /*char *key_string = generate_key_string(key, string_size, key_size);
-    char * message = decypher(filteredStr, key_string, string_size);
-    reintroduceSpecialChars(message, specialChars, numSpecialChars);
-    printf("%s", message);*/
-    
-
     printf("Do you want to edit the key?\n1)sim\n2}não\nEscolha: ");
     int choice = 0;
     char newline;
@@ -292,7 +264,7 @@ void kasiski()
         printf("Enter a key: ");
         size_t key_size = getline(&key, &size, stdin);
         printf("You entered: %s", key);
-        char *key_string = generate_key_string(key, string_size, key_size);
+        char *key_string = generateKeyString(key, string_size, key_size);
         char *message = decypher(filteredStr, key_string, string_size);
         reintroduceSpecialChars(message, specialChars, numSpecialChars);
         printf("%s", message);
@@ -300,7 +272,7 @@ void kasiski()
     }
     else if (choice == 2)
     {
-        char *key_string = generate_key_string(key, string_size, key_size);
+        char *key_string = generateKeyString(key, string_size, key_size);
         char *message = decypher(filteredStr, key_string, string_size);
         reintroduceSpecialChars(message, specialChars, numSpecialChars);
         printf("%s", message);
@@ -313,7 +285,7 @@ void kasiski()
     free(cyphertext); free(key); free(filteredStr);
 }
 
-void decypher_menu()
+void decypherSetup()
 {
     char *cyphertext = NULL;
     char *key = NULL;
@@ -330,7 +302,7 @@ void decypher_menu()
     size_t key_size = getline(&key, &size, stdin);
     printf("You entered: %s", key);
 
-    char *key_string = generate_key_string(key, string_size, key_size);
+    char *key_string = generateKeyString(key, string_size, key_size);
     char *message = decypher(filteredStr, key_string, string_size);
     reintroduceSpecialChars(message, specialChars, numSpecialChars);
     printf("%s", message);
@@ -363,11 +335,11 @@ void main()
         switch (choice)
         {
         case 1:
-            cypher_menu();
+            cypherSetup();
             running = false;
             break;
         case 2:
-            decypher_menu();
+            decypherSetup();
             running = false;
             break;
         case 3:
