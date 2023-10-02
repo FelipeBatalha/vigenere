@@ -180,6 +180,7 @@ void cypherSetup()
     size_t size = 0;
     SpecialCharInfo *specialChars;
     int numSpecialChars;
+    char lang[] = "en";
 
     printf("Enter a message: ");
     size_t string_size = getline(&message, &size, stdin);
@@ -247,9 +248,9 @@ void kasiski()
     scanf("%d", &key_size);
     printf("Assuming key size %d ...\n", key_size);
 
-    char *key = (char *)malloc(key_size * (sizeof(char)));
-    //pt
-    /*for (int j = 0; j < key_size; j++)
+    char *enKey = (char *)malloc(key_size * (sizeof(char)));
+    char *ptKey = (char *)malloc(key_size * (sizeof(char)));
+    for (int j = 0; j < key_size; j++)
     {
         int occurrences[26] = {0};
         for (int i = j; i < string_size - 1; i += key_size)
@@ -268,19 +269,19 @@ void kasiski()
             {
                 e -= 26;
             }
-            if (i > 25)
+            if (o > 25)
             {
-                i -= 26;
+                o -= 26;
             }
-            if (occurrences[a] + occurrences[e] + occurrences[i] > total)
+            if (occurrences[a] + occurrences[e] + occurrences[o] > total)
             {
-                total = occurrences[a] + occurrences[e] + occurrences[i];
+                total = occurrences[a] + occurrences[e] + occurrences[o];
                 topthree = a;
             }
         }
-        key[j] = ascii(topthree);
-        printf("Key letter %d: %c\n", j + 1, key[j]);
-    }*/
+        ptKey[j] = ascii(topthree);
+        printf("Portugues %d: %c\n", j + 1, ptKey[j]);
+    }
     for (int j = 0; j < key_size; j++)
     {
         int occurrences[26] = {0};
@@ -310,41 +311,49 @@ void kasiski()
                 topthree = a;
             }
         }
-        key[j] = ascii(topthree);
-        printf("Key letter %d: %c\n", j + 1, key[j]);
-    }  
+        enKey[j] = ascii(topthree);
+        printf("Ingles %d: %c\n", j + 1, enKey[j]);
+    }
 
-    printf("Do you want to edit the key?\n1)sim\n2}não\nEscolha: ");
+    printf("Escolha a chave:\n1)Portugues\n2}Ingles\n3)Editar (lembre-se do comprimento %d)\nEscolha: ",key_size);
     int choice = 0;
     char newline;
     scanf("%d", &choice);
 
     while ((newline = getchar()) != '\n' && newline != EOF);
 
-    if (choice == 1)
+    if (choice == 3)
     {
         printf("Enter a key: ");
-        size_t key_size = getline(&key, &size, stdin);
-        printf("You entered: %s", key);
-        char *key_string = generateKeyString(key, string_size, key_size);
+        size_t key_size = getline(&ptKey, &size, stdin);
+        printf("You entered: %s", ptKey);
+        char *key_string = generateKeyString(ptKey, string_size, key_size);
         char *message = decypher(filteredStr, key_string, string_size);
         reintroduceSpecialChars(message, specialChars, numSpecialChars);
-        printf("%s", message);
+        printf("Mensagem: %s", message);
         free(key_string);
     }
     else if (choice == 2)
     {
-        char *key_string = generateKeyString(key, string_size, key_size);
+        char *key_string = generateKeyString(enKey, string_size, key_size);
         char *message = decypher(filteredStr, key_string, string_size);
         reintroduceSpecialChars(message, specialChars, numSpecialChars);
-        printf("%s", message);
+        printf("Mensagem: %s", message);
+        free(key_string);
+    }
+    else if (choice == 1)
+    {
+        char *key_string = generateKeyString(ptKey, string_size, key_size);
+        char *message = decypher(filteredStr, key_string, string_size);
+        reintroduceSpecialChars(message, specialChars, numSpecialChars);
+        printf("Mensagem: %s", message);
         free(key_string);
     }
     else
     {
         printf("1 ou 2!\n");
     }
-    free(cyphertext); free(key); free(filteredStr);
+    free(cyphertext); free(ptKey); free(filteredStr); free(enKey);
 }
 
 void decypherSetup()
