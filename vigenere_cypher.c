@@ -10,7 +10,7 @@ typedef struct
     int position;
 } SpecialCharInfo;
 
-// Function to filter special characters and store their positions
+
 char *filterAndStoreSpecialChars(const char *input, SpecialCharInfo **specialChars, int *numSpecialChars)
 {
     int len = strlen(input);
@@ -19,15 +19,12 @@ char *filterAndStoreSpecialChars(const char *input, SpecialCharInfo **specialCha
     char *filteredStr = (char *)malloc((len + 1) * sizeof(char));
     if (filteredStr == NULL)
     {
-        // Handle memory allocation error
         return NULL;
     }
 
-    // Initialize variables
     *specialChars = (SpecialCharInfo *)malloc(len * sizeof(SpecialCharInfo));
     if (*specialChars == NULL)
     {
-        // Handle memory allocation error
         free(filteredStr);
         return NULL;
     }
@@ -57,7 +54,6 @@ char *filterAndStoreSpecialChars(const char *input, SpecialCharInfo **specialCha
     return filteredStr;
 }
 
-// Function to reintroduce special characters
 void reintroduceSpecialChars(char *inputStr, const SpecialCharInfo *specialChars, int numSpecialChars)
 {
     for (int i = numSpecialChars - 1; i >= 0; i--)
@@ -69,46 +65,10 @@ void reintroduceSpecialChars(char *inputStr, const SpecialCharInfo *specialChars
     }
 }
 
-char * getText() {
-    SpecialCharInfo *specialChars;
-    int numSpecialChars;
-    FILE *file = fopen("desafio1.txt", "r"); // Replace "your_file.txt" with the path to your file
-
-    char *contents = NULL;
-    size_t size = 0;
-    char buffer[1024]; // Buffer to read file contents
-
-    while (fgets(buffer, sizeof(buffer), file) != NULL) {
-
-        size_t new_size = size + strlen(buffer) + 2; // +2 for the newline and space
-        char *new_contents = (char *)realloc(contents, new_size);
-
-        contents = new_contents;
-
-        strcat(contents, buffer);
-        strcat(contents, " "); // Add a space
-        size = new_size - 1; // Update the size
-    }
-
-    fclose(file);
-
-    // At this point, 'contents' contains the file contents with spaces for new lines
-    char *filteredStr = filterAndStoreSpecialChars(contents, &specialChars, &numSpecialChars);
-
-    return filteredStr;
-}
-
 int ascii(int x)
 {
     return x + 97;
 }
-
-/*char * parse_text(char * text,size_t size){
-    for (int i = 0; i < size -1; i++){
-
-    }
-}
-*/
 
 int alphabet(char x)
 {
@@ -118,12 +78,10 @@ int alphabet(char x)
 
 char *cypher(char *message, char *key_string, size_t size)
 {
-    // pega um ascii, compara com a message com a chave repetida, substitui os valores
     char *cyphertext = NULL;
     cyphertext = malloc(size);
     for (int i = 0; i < size - 1; i++)
     {
-        // 122 é a última letra do alfabeto em ascii, então subtraio 26 para ir pro começo conforme a tabela de vigenere
         if (alphabet(key_string[i]) + alphabet(message[i]) > 26)
         {
             cyphertext[i] = ascii(alphabet(key_string[i]) + alphabet(message[i]) - 26);
@@ -138,12 +96,10 @@ char *cypher(char *message, char *key_string, size_t size)
 
 char *decypher(char *cypher, char *key_string, size_t size)
 {
-    // pega um ascii, compara com a string com a chave repetida, substitui os valores
     char *message = NULL;
     message = malloc(size);
     for (int i = 0; i < size - 1; i++)
     {
-        // 97 é a primeira letra do alfabeto em ascii, então somo 26 para ir pro final conforme a tabela de vigenere
         if (alphabet(cypher[i]) - alphabet(key_string[i]) < 0)
         {
             message[i] = ascii(alphabet(cypher[i]) - alphabet(key_string[i]) + 26);
@@ -208,22 +164,20 @@ void trigramDistance(char *cypher, size_t size)
         char a = cypher[i];
         char b = cypher[i + 1];
         char c = cypher[i + 2];
-        // printf("%c%c%c\n", a, b, c);
         for (int j = i + 3; j < size - 3; j++)
         {
             if (cypher[j] == a && cypher[j + 1] == b && cypher[j + 2] == c)
             {
                 int distance = j - i;
-                printf("%c%c%c Distancia: %d (Divisores:", a, b, c, distance);
+                printf("%c%c%c Distance: %d (Divisors:", a, b, c, distance);
                 for (int k = 1; k < distance; k++)
                 {
-                    if (distance % k == 0)
+                    if (distance % k == 0 > 3)
                     {
                         printf(" %d", k);
                     }
                 }
                 printf(")\n");
-                // printf("Distancia entre trigramas: ", distance);
             }
         }
     }
@@ -315,7 +269,7 @@ void kasiski()
         printf("Ingles %d: %c\n", j + 1, enKey[j]);
     }
 
-    printf("Escolha a chave:\n1)Portugues\n2}Ingles\n3)Editar (lembre-se do comprimento %d)\nEscolha: ",key_size);
+    printf("Choose key:\n1)Portuguese\n2}English\n3)Edit (remember key size %d)\nChoice: ",key_size);
     int choice = 0;
     char newline;
     scanf("%d", &choice);
@@ -330,7 +284,7 @@ void kasiski()
         char *key_string = generateKeyString(ptKey, string_size, key_size);
         char *message = decypher(filteredStr, key_string, string_size);
         reintroduceSpecialChars(message, specialChars, numSpecialChars);
-        printf("Mensagem: %s", message);
+        printf("Message: %s", message);
         free(key_string);
     }
     else if (choice == 2)
@@ -338,7 +292,7 @@ void kasiski()
         char *key_string = generateKeyString(enKey, string_size, key_size);
         char *message = decypher(filteredStr, key_string, string_size);
         reintroduceSpecialChars(message, specialChars, numSpecialChars);
-        printf("Mensagem: %s", message);
+        printf("Message: %s", message);
         free(key_string);
     }
     else if (choice == 1)
@@ -346,12 +300,12 @@ void kasiski()
         char *key_string = generateKeyString(ptKey, string_size, key_size);
         char *message = decypher(filteredStr, key_string, string_size);
         reintroduceSpecialChars(message, specialChars, numSpecialChars);
-        printf("Mensagem: %s", message);
+        printf("Message: %s", message);
         free(key_string);
     }
     else
     {
-        printf("1 ou 2!\n");
+        printf("1 or 2!\n");
     }
     free(cyphertext); free(ptKey); free(filteredStr); free(enKey);
 }
@@ -417,7 +371,7 @@ void main()
             kasiski();
             break;
         default:
-            printf("Insira 1, 2 ou 3!\n");
+            printf("Insert 1, 2 ou 3!\n");
             break;
         }
     }
