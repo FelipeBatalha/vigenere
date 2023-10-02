@@ -10,7 +10,6 @@ typedef struct
     int position;
 } SpecialCharInfo;
 
-
 char *filterAndStoreSpecialChars(const char *input, SpecialCharInfo **specialChars, int *numSpecialChars)
 {
     int len = strlen(input);
@@ -209,7 +208,7 @@ void kasiski()
         int occurrences[26] = {0};
         for (int i = j; i < string_size - 1; i += key_size)
         {
-            occurrences[alphabet( filteredStr[i])]++;
+            occurrences[alphabet(filteredStr[i])]++;
         }
         int topthree = 0;
         int total = 0;
@@ -241,7 +240,7 @@ void kasiski()
         int occurrences[26] = {0};
         for (int i = j; i < string_size - 1; i += key_size)
         {
-            occurrences[alphabet( filteredStr[i])]++;
+            occurrences[alphabet(filteredStr[i])]++;
         }
         int topthree = 0;
         int total = 0;
@@ -269,12 +268,13 @@ void kasiski()
         printf("Ingles %d: %c\n", j + 1, enKey[j]);
     }
 
-    printf("Choose key:\n1)Portuguese\n2}English\n3)Edit (remember key size %d)\nChoice: ",key_size);
+    printf("Choose key:\n1)Portuguese\n2}English\n3)Edit (remember key size %d)\nChoice: ", key_size);
     int choice = 0;
     char newline;
     scanf("%d", &choice);
 
-    while ((newline = getchar()) != '\n' && newline != EOF);
+    while ((newline = getchar()) != '\n' && newline != EOF)
+        ;
 
     if (choice == 3)
     {
@@ -307,7 +307,10 @@ void kasiski()
     {
         printf("1 or 2!\n");
     }
-    free(cyphertext); free(ptKey); free(filteredStr); free(enKey);
+    free(cyphertext);
+    free(ptKey);
+    free(filteredStr);
+    free(enKey);
 }
 
 void decypherSetup()
@@ -355,7 +358,8 @@ void main()
             continue;
         }
 
-        while ((newline = getchar()) != '\n' && newline != EOF);
+        while ((newline = getchar()) != '\n' && newline != EOF)
+            ;
 
         switch (choice)
         {
