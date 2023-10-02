@@ -3,6 +3,15 @@
 #include <ctype.h>
 #include <stdbool.h>
 
+int ascii(int x){
+    return x + 97;
+}
+
+int alphabet(char x){
+    tolower(x);
+    return (int) x - 97;
+}
+
 void cypher(char * message, char * key_string, size_t size){
    // pega um ascii, compara com a message com a chave repetida, substitui os valores  
     char * cypher = NULL;
@@ -108,11 +117,6 @@ void trigram_list(char * cypher, size_t size){
             }
         }
     }
-    /*for(int i = 0; i < size - 3; i++){
-        //if(trigram_list[i] != 0){
-            printf("Trigrama: %c%c%c Distancia: %d\n", cypher[i], cypher[i + 1], cypher[i + 2], trigram_list[i]);
-        //}
-    }*/
 }
 
 void kasiski(){
@@ -166,6 +170,15 @@ void kasiski(){
         printf("%d x %c|", most_common_letter_quantity, cypher[most_common_letter_index]);
     }
     printf("\n\n\n");
+
+    int occurrences[26] = {0};
+    for (int i = 0; i < string_size -1; i++){
+        occurrences[alphabet(cypher[i])]++;
+    }
+    for (int i = 0; i < 26; i++){
+        printf("Letter %c: %d\n", ascii(i), occurrences[i]);
+    }
+
 
     double enLetterFrequencies[26] = {
         0.0817, 0.0149, 0.0278, 0.0425, 0.1270, 0.0223, 0.0202, 0.0609, 0.0697, 0.0015,
