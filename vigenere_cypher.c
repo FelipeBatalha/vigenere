@@ -7,6 +7,13 @@ int ascii(int x){
     return x + 97;
 }
 
+/*char * parse_text(char * text,size_t size){
+    for (int i = 0; i < size -1; i++){
+        
+    }
+}
+*/
+
 int alphabet(char x){
     tolower(x);
     return (int) x - 97;
@@ -42,7 +49,7 @@ void decypher(char * cypher, char * key_string, size_t size){
             message[i] = (int) cypher[i] - ((int) key_string[i] - (int) 'a');
         }
     }
-    printf("%s\n", message);
+    printf("The message is:\n%s\n\n", message);
     free(message);
 }
 
@@ -56,7 +63,7 @@ char * generate_key_string(char * key, size_t string_size, size_t key_size){
         }
         key_string[i] = tolower(key[j]);
     }
-    printf("The key string is: %s\n", key_string);
+    printf("The key string is: %s\n\n", key_string);
     return key_string;
 }
 
@@ -134,7 +141,7 @@ void kasiski(){
     printf("Assuming key size %d ...\n", key_size);
 
     //printa colunas equivalentes a cada letra da chave
-    
+    /*
     for (int i = 0; i < string_size -1; i++){
         if (i % key_size == 0){
             printf("\n ");
@@ -170,15 +177,55 @@ void kasiski(){
         printf("%d x %c|", most_common_letter_quantity, cypher[most_common_letter_index]);
     }
     printf("\n\n\n");
-
+    */
+    char * key = (char *) malloc(key_size * (sizeof(char)));
     int occurrences[26] = {0};
-    for (int i = 0; i < string_size -1; i++){
+    for (int i = 0; i < string_size -1; i+=key_size){
         occurrences[alphabet(cypher[i])]++;
     }
-    for (int i = 0; i < 26; i++){
-        printf("Letter %c: %d\n", ascii(i), occurrences[i]);
+
+    for (int j = 0; j < key_size; j++){
+        int occurrences[26] = {0};
+        for (int i = j; i < string_size -1; i+=key_size){
+            occurrences[alphabet(cypher[i])]++;
+        }
+        int topthree = 0;
+        int total = 0;
+        for (int k = j; k < 26; k += key_size){
+            int a = k;
+            int e = k + 4;
+            int i = k + 8;
+
+            if(e > 25){
+                e -= 26;
+            }
+            if(i > 25){
+                i -= 26;
+            }
+            if (occurrences[a] + occurrences[e] + occurrences[i] > total){
+                total = occurrences[a] + occurrences[e] + occurrences[i];
+                topthree = a;
+            }
+        }
+        key[j] = ascii(topthree);
+        printf("Key letter %d: %c\n", j + 1, key[j]);
     }
 
+    //do you think the key is correct? if no, try another language and/or key size
+    char * key_string = generate_key_string(key, string_size, key_size);
+    decypher(cypher, key_string, size);
+    printf("Do you want to edit the key?\n1)sim\n2}não\nEscolha: ");
+    int choice = 0;
+    scanf("%d", &choice);
+    switch(choice){
+        case 1:
+            break;
+        case 2:
+            break;
+        default:
+            printf("1 ou 2!\n");
+            break;
+    }
 
     double enLetterFrequencies[26] = {
         0.0817, 0.0149, 0.0278, 0.0425, 0.1270, 0.0223, 0.0202, 0.0609, 0.0697, 0.0015,
@@ -191,9 +238,9 @@ void kasiski(){
         0.0002, 0.0278, 0.0474, 0.0505, 0.1073, 0.0252, 0.0120, 0.0653, 0.0781, 0.0434,
         0.0463, 0.0167, 0.0001, 0.0021, 0.0001, 0.0047
     };
-    //divide_cypher(cypher,);
+
     
-    free(cypher);
+    free(cypher); free(key_string); free(key);
 }
     
 
