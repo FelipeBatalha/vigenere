@@ -4,25 +4,29 @@
 #include <stdbool.h>
 #include <string.h>
 
-typedef struct {
+typedef struct
+{
     char character;
     int position;
 } SpecialCharInfo;
 
 // Function to filter special characters and store their positions
-char *filterAndStoreSpecialChars(const char *input, SpecialCharInfo **specialChars, int *numSpecialChars) {
+char *filterAndStoreSpecialChars(const char *input, SpecialCharInfo **specialChars, int *numSpecialChars)
+{
     int len = strlen(input);
 
     // Allocate memory for filtered string
     char *filteredStr = (char *)malloc((len + 1) * sizeof(char));
-    if (filteredStr == NULL) {
+    if (filteredStr == NULL)
+    {
         // Handle memory allocation error
         return NULL;
     }
 
     // Initialize variables
     *specialChars = (SpecialCharInfo *)malloc(len * sizeof(SpecialCharInfo));
-    if (*specialChars == NULL) {
+    if (*specialChars == NULL)
+    {
         // Handle memory allocation error
         free(filteredStr);
         return NULL;
@@ -31,12 +35,16 @@ char *filterAndStoreSpecialChars(const char *input, SpecialCharInfo **specialCha
     int filteredIndex = 0;
     *numSpecialChars = 0;
 
-    for (int i = 0; i < len; i++) {
+    for (int i = 0; i < len; i++)
+    {
         char currentChar = input[i];
-        if (isalpha(currentChar)) {
+        if (isalpha(currentChar))
+        {
             filteredStr[filteredIndex] = currentChar;
             filteredIndex++;
-        } else {
+        }
+        else
+        {
             // Store special character information
             (*specialChars)[*numSpecialChars].character = currentChar;
             (*specialChars)[*numSpecialChars].position = filteredIndex;
@@ -50,8 +58,10 @@ char *filterAndStoreSpecialChars(const char *input, SpecialCharInfo **specialCha
 }
 
 // Function to reintroduce special characters
-void reintroduceSpecialChars(char *inputStr, const SpecialCharInfo *specialChars, int numSpecialChars) {
-    for (int i = numSpecialChars - 1; i >= 0; i--) {
+void reintroduceSpecialChars(char *inputStr, const SpecialCharInfo *specialChars, int numSpecialChars)
+{
+    for (int i = numSpecialChars - 1; i >= 0; i--)
+    {
         int position = specialChars[i].position;
         char character = specialChars[i].character;
         memmove(inputStr + position + 1, inputStr + position, strlen(inputStr) - position + 1);
@@ -77,7 +87,7 @@ int alphabet(char x)
     return (int)x - 97;
 }
 
-char * cypher(char *message, char *key_string, size_t size)
+char *cypher(char *message, char *key_string, size_t size)
 {
     // pega um ascii, compara com a message com a chave repetida, substitui os valores
     char *cyphertext = NULL;
@@ -97,7 +107,7 @@ char * cypher(char *message, char *key_string, size_t size)
     return cyphertext;
 }
 
-char * decypher(char *cypher, char *key_string, size_t size)
+char *decypher(char *cypher, char *key_string, size_t size)
 {
     // pega um ascii, compara com a string com a chave repetida, substitui os valores
     char *message = NULL;
@@ -152,7 +162,7 @@ void cypher_menu()
     printf("You entered: %s", key);
 
     char *key_string = generate_key_string(key, string_size, key_size);
-    char * cyphertext = cypher(filteredStr, key_string, string_size);
+    char *cyphertext = cypher(filteredStr, key_string, string_size);
     reintroduceSpecialChars(cyphertext, specialChars, numSpecialChars);
     printf("%s", cyphertext);
 
@@ -212,7 +222,7 @@ void trigram_list(char *cypher, size_t size)
 
 void kasiski()
 {
-    char * cyphertext = NULL;
+    char *cyphertext = NULL;
     size_t size = 0;
     int key_size;
     SpecialCharInfo *specialChars;
@@ -223,24 +233,19 @@ void kasiski()
     printf("You entered: %s", cyphertext);
     char *filteredStr = filterAndStoreSpecialChars(cyphertext, &specialChars, &numSpecialChars);
 
-    trigram_list(cyphertext, string_size);
+    trigram_list(filteredStr, string_size);
     printf("What do you think the size of the key is?\nAnswer: ");
     scanf("%d", &key_size);
     printf("Assuming key size %d ...\n", key_size);
 
     char *key = (char *)malloc(key_size * (sizeof(char)));
-    int occurrences[26] = {0};
-    for (int i = 0; i < string_size - 1; i += key_size)
-    {
-        occurrences[alphabet(cyphertext[i])]++;
-    }
 
     for (int j = 0; j < key_size; j++)
     {
         int occurrences[26] = {0};
         for (int i = j; i < string_size - 1; i += key_size)
         {
-            occurrences[alphabet(cyphertext[i])]++;
+            occurrences[alphabet( filteredStr[i])]++;
         }
         int topthree = 0;
         int total = 0;
@@ -269,51 +274,56 @@ void kasiski()
     }
 
     // do you think the key is correct? if no, try another language and/or key size
-    char *key_string = generate_key_string(key, string_size, key_size);
+    /*char *key_string = generate_key_string(key, string_size, key_size);
     char * message = decypher(filteredStr, key_string, string_size);
     reintroduceSpecialChars(message, specialChars, numSpecialChars);
-    printf("%s", message);
+    printf("%s", message);*/
+    
 
     printf("Do you want to edit the key?\n1)sim\n2}não\nEscolha: ");
     int choice = 0;
+    char newline;
     scanf("%d", &choice);
-    switch (choice)
+
+    while ((newline = getchar()) != '\n' && newline != EOF);
+
+    if (choice == 1)
     {
-    case 1:
-        break;
-    case 2:
-        break;
-    default:
-        printf("1 ou 2!\n");
-        break;
+        printf("Enter a key: ");
+        size_t key_size = getline(&key, &size, stdin);
+        printf("You entered: %s", key);
+        char *key_string = generate_key_string(key, string_size, key_size);
+        char *message = decypher(filteredStr, key_string, string_size);
+        reintroduceSpecialChars(message, specialChars, numSpecialChars);
+        printf("%s", message);
+        free(key_string);
     }
-
-    double enLetterFrequencies[26] = {
-        0.0817, 0.0149, 0.0278, 0.0425, 0.1270, 0.0223, 0.0202, 0.0609, 0.0697, 0.0015,
-        0.0077, 0.0402, 0.0241, 0.0675, 0.0751, 0.0193, 0.0009, 0.0599, 0.0633, 0.0906,
-        0.0276, 0.0098, 0.0236, 0.0015, 0.0197, 0.0007};
-
-    double ptletterFrequencies[26] = {
-        0.1463, 0.0104, 0.0388, 0.0499, 0.1257, 0.0102, 0.0130, 0.0130, 0.0618, 0.0041,
-        0.0002, 0.0278, 0.0474, 0.0505, 0.1073, 0.0252, 0.0120, 0.0653, 0.0781, 0.0434,
-        0.0463, 0.0167, 0.0001, 0.0021, 0.0001, 0.0047};
-
-    free(cyphertext);
-    free(key_string);
-    free(key);
+    else if (choice == 2)
+    {
+        char *key_string = generate_key_string(key, string_size, key_size);
+        char *message = decypher(filteredStr, key_string, string_size);
+        reintroduceSpecialChars(message, specialChars, numSpecialChars);
+        printf("%s", message);
+        free(key_string);
+    }
+    else
+    {
+        printf("1 ou 2!\n");
+    }
+    free(cyphertext); free(key); free(filteredStr);
 }
 
 void decypher_menu()
 {
-    char * cyphertext = NULL;
+    char *cyphertext = NULL;
     char *key = NULL;
     size_t size = 0;
     SpecialCharInfo *specialChars;
     int numSpecialChars;
 
     printf("Enter a cypher: ");
-    size_t string_size = getline(& cyphertext, &size, stdin);
-    printf("You entered: %s",  cyphertext);
+    size_t string_size = getline(&cyphertext, &size, stdin);
+    printf("You entered: %s", cyphertext);
     char *filteredStr = filterAndStoreSpecialChars(cyphertext, &specialChars, &numSpecialChars);
 
     printf("Enter a key: ");
@@ -321,11 +331,11 @@ void decypher_menu()
     printf("You entered: %s", key);
 
     char *key_string = generate_key_string(key, string_size, key_size);
-    char * message = decypher(filteredStr, key_string, string_size);
+    char *message = decypher(filteredStr, key_string, string_size);
     reintroduceSpecialChars(message, specialChars, numSpecialChars);
     printf("%s", message);
 
-    free( cyphertext);
+    free(cyphertext);
     free(key);
     free(key_string);
 }
@@ -348,8 +358,7 @@ void main()
             continue;
         }
 
-        while ((newline = getchar()) != '\n' && newline != EOF)
-            ;
+        while ((newline = getchar()) != '\n' && newline != EOF);
 
         switch (choice)
         {
