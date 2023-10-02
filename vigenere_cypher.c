@@ -69,6 +69,35 @@ void reintroduceSpecialChars(char *inputStr, const SpecialCharInfo *specialChars
     }
 }
 
+char * getText() {
+    SpecialCharInfo *specialChars;
+    int numSpecialChars;
+    FILE *file = fopen("desafio1.txt", "r"); // Replace "your_file.txt" with the path to your file
+
+    char *contents = NULL;
+    size_t size = 0;
+    char buffer[1024]; // Buffer to read file contents
+
+    while (fgets(buffer, sizeof(buffer), file) != NULL) {
+
+        size_t new_size = size + strlen(buffer) + 2; // +2 for the newline and space
+        char *new_contents = (char *)realloc(contents, new_size);
+
+        contents = new_contents;
+
+        strcat(contents, buffer);
+        strcat(contents, " "); // Add a space
+        size = new_size - 1; // Update the size
+    }
+
+    fclose(file);
+
+    // At this point, 'contents' contains the file contents with spaces for new lines
+    char *filteredStr = filterAndStoreSpecialChars(contents, &specialChars, &numSpecialChars);
+
+    return filteredStr;
+}
+
 int ascii(int x)
 {
     return x + 97;
