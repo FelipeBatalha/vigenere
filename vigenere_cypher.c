@@ -9,14 +9,18 @@ typedef struct {
     int position;
 } SpecialCharInfo;
 
+// Function to filter special characters and store their positions
 char *filterAndStoreSpecialChars(const char *input, SpecialCharInfo **specialChars, int *numSpecialChars) {
     int len = strlen(input);
+
+    // Allocate memory for filtered string
     char *filteredStr = (char *)malloc((len + 1) * sizeof(char));
     if (filteredStr == NULL) {
         // Handle memory allocation error
         return NULL;
     }
 
+    // Initialize variables
     *specialChars = (SpecialCharInfo *)malloc(len * sizeof(SpecialCharInfo));
     if (*specialChars == NULL) {
         // Handle memory allocation error
@@ -35,7 +39,7 @@ char *filterAndStoreSpecialChars(const char *input, SpecialCharInfo **specialCha
         } else {
             // Store special character information
             (*specialChars)[*numSpecialChars].character = currentChar;
-            (*specialChars)[*numSpecialChars].position = i;
+            (*specialChars)[*numSpecialChars].position = filteredIndex;
             (*numSpecialChars)++;
         }
     }
@@ -46,11 +50,12 @@ char *filterAndStoreSpecialChars(const char *input, SpecialCharInfo **specialCha
 }
 
 // Function to reintroduce special characters
-void reintroduceSpecialChars(char *filteredStr, SpecialCharInfo *specialChars, int numSpecialChars) {
-    for (int i = 0; i < numSpecialChars; i++) {
+void reintroduceSpecialChars(char *inputStr, const SpecialCharInfo *specialChars, int numSpecialChars) {
+    for (int i = numSpecialChars - 1; i >= 0; i--) {
         int position = specialChars[i].position;
         char character = specialChars[i].character;
-        filteredStr[position] = character;
+        memmove(inputStr + position + 1, inputStr + position, strlen(inputStr) - position + 1);
+        inputStr[position] = character;
     }
 }
 
@@ -72,7 +77,7 @@ int alphabet(char x)
     return (int)x - 97;
 }
 
-void cypher(char *message, char *key_string, size_t size)
+char * cypher(char *message, char *key_string, size_t size)
 {
     // pega um ascii, compara com a message com a chave repetida, substitui os valores
     char *cyphertext = NULL;
@@ -89,11 +94,10 @@ void cypher(char *message, char *key_string, size_t size)
             cyphertext[i] = ascii(alphabet(key_string[i]) + alphabet(message[i]));
         }
     }
-    printf("Cifra:\n%s\n", cyphertext);
-    free(cyphertext);
+    return cyphertext;
 }
 
-void decypher(char *cypher, char *key_string, size_t size)
+char * decypher(char *cypher, char *key_string, size_t size)
 {
     // pega um ascii, compara com a string com a chave repetida, substitui os valores
     char *message = NULL;
@@ -110,8 +114,7 @@ void decypher(char *cypher, char *key_string, size_t size)
             message[i] = ascii(alphabet(cypher[i]) - alphabet(key_string[i]));
         }
     }
-    printf("Mensagem:\n%s\n\n", message);
-    free(message);
+    return message;
 }
 
 char *generate_key_string(char *key, size_t string_size, size_t key_size)
@@ -136,17 +139,22 @@ void cypher_menu()
     char *message = NULL;
     char *key = NULL;
     size_t size = 0;
+    SpecialCharInfo *specialChars;
+    int numSpecialChars;
 
     printf("Enter a message: ");
     size_t string_size = getline(&message, &size, stdin);
     printf("You entered: %s", message);
+    char *filteredStr = filterAndStoreSpecialChars(message, &specialChars, &numSpecialChars);
 
     printf("Enter a key: ");
     size_t key_size = getline(&key, &size, stdin);
     printf("You entered: %s", key);
 
     char *key_string = generate_key_string(key, string_size, key_size);
-    cypher(message, key_string, string_size);
+    char * cyphertext = cypher(filteredStr, key_string, string_size);
+    reintroduceSpecialChars(cyphertext, specialChars, numSpecialChars);
+    printf("%s", cyphertext);
 
     free(message);
     free(key);
@@ -204,15 +212,18 @@ void trigram_list(char *cypher, size_t size)
 
 void kasiski()
 {
-    char *cypher = NULL;
+    char * cyphertext = NULL;
     size_t size = 0;
     int key_size;
+    SpecialCharInfo *specialChars;
+    int numSpecialChars;
 
     printf("Enter a cypher: ");
-    size_t string_size = getline(&cypher, &size, stdin);
-    printf("You entered: %s", cypher);
+    size_t string_size = getline(&cyphertext, &size, stdin);
+    printf("You entered: %s", cyphertext);
+    char *filteredStr = filterAndStoreSpecialChars(cyphertext, &specialChars, &numSpecialChars);
 
-    trigram_list(cypher, string_size);
+    trigram_list(cyphertext, string_size);
     printf("What do you think the size of the key is?\nAnswer: ");
     scanf("%d", &key_size);
     printf("Assuming key size %d ...\n", key_size);
@@ -221,7 +232,7 @@ void kasiski()
     int occurrences[26] = {0};
     for (int i = 0; i < string_size - 1; i += key_size)
     {
-        occurrences[alphabet(cypher[i])]++;
+        occurrences[alphabet(cyphertext[i])]++;
     }
 
     for (int j = 0; j < key_size; j++)
@@ -229,7 +240,7 @@ void kasiski()
         int occurrences[26] = {0};
         for (int i = j; i < string_size - 1; i += key_size)
         {
-            occurrences[alphabet(cypher[i])]++;
+            occurrences[alphabet(cyphertext[i])]++;
         }
         int topthree = 0;
         int total = 0;
@@ -259,7 +270,10 @@ void kasiski()
 
     // do you think the key is correct? if no, try another language and/or key size
     char *key_string = generate_key_string(key, string_size, key_size);
-    decypher(cypher, key_string, size);
+    char * message = decypher(filteredStr, key_string, string_size);
+    reintroduceSpecialChars(message, specialChars, numSpecialChars);
+    printf("%s", message);
+
     printf("Do you want to edit the key?\n1)sim\n2}não\nEscolha: ");
     int choice = 0;
     scanf("%d", &choice);
@@ -284,29 +298,34 @@ void kasiski()
         0.0002, 0.0278, 0.0474, 0.0505, 0.1073, 0.0252, 0.0120, 0.0653, 0.0781, 0.0434,
         0.0463, 0.0167, 0.0001, 0.0021, 0.0001, 0.0047};
 
-    free(cypher);
+    free(cyphertext);
     free(key_string);
     free(key);
 }
 
 void decypher_menu()
 {
-    char *cypher = NULL;
+    char * cyphertext = NULL;
     char *key = NULL;
     size_t size = 0;
+    SpecialCharInfo *specialChars;
+    int numSpecialChars;
 
     printf("Enter a cypher: ");
-    size_t string_size = getline(&cypher, &size, stdin);
-    printf("You entered: %s", cypher);
+    size_t string_size = getline(& cyphertext, &size, stdin);
+    printf("You entered: %s",  cyphertext);
+    char *filteredStr = filterAndStoreSpecialChars(cyphertext, &specialChars, &numSpecialChars);
 
     printf("Enter a key: ");
     size_t key_size = getline(&key, &size, stdin);
     printf("You entered: %s", key);
 
     char *key_string = generate_key_string(key, string_size, key_size);
-    decypher(cypher, key_string, string_size);
+    char * message = decypher(filteredStr, key_string, string_size);
+    reintroduceSpecialChars(message, specialChars, numSpecialChars);
+    printf("%s", message);
 
-    free(cypher);
+    free( cyphertext);
     free(key);
     free(key_string);
 }
@@ -346,11 +365,7 @@ void main()
             kasiski();
             break;
         default:
-            char *inputStr = "Hello, World! 123";
-            SpecialCharInfo *specialChars;
-            int numSpecialChars;
-            char *filteredStr = filterAndStoreSpecialChars(inputStr, &specialChars, &numSpecialChars);
-            //printf("Insira 1, 2 ou 3!\n");
+            printf("Insira 1, 2 ou 3!\n");
             break;
         }
     }
