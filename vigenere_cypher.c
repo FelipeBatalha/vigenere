@@ -206,6 +206,7 @@ void kasiski()
     int key_size;
     SpecialCharInfo *specialChars;
     int numSpecialChars;
+    char lang[] = "en";
 
     printf("Enter a cypher: ");
     size_t string_size = getline(&cyphertext, &size, stdin);
@@ -218,7 +219,39 @@ void kasiski()
     printf("Assuming key size %d ...\n", key_size);
 
     char *key = (char *)malloc(key_size * (sizeof(char)));
+    //pt
+    /*for (int j = 0; j < key_size; j++)
+    {
+        int occurrences[26] = {0};
+        for (int i = j; i < string_size - 1; i += key_size)
+        {
+            occurrences[alphabet( filteredStr[i])]++;
+        }
+        int topthree = 0;
+        int total = 0;
+        for (int k = j; k < 26; k += key_size)
+        {
+            int a = k;
+            int e = k + 4;
+            int o = k + 14;
 
+            if (e > 25)
+            {
+                e -= 26;
+            }
+            if (i > 25)
+            {
+                i -= 26;
+            }
+            if (occurrences[a] + occurrences[e] + occurrences[i] > total)
+            {
+                total = occurrences[a] + occurrences[e] + occurrences[i];
+                topthree = a;
+            }
+        }
+        key[j] = ascii(topthree);
+        printf("Key letter %d: %c\n", j + 1, key[j]);
+    }*/
     for (int j = 0; j < key_size; j++)
     {
         int occurrences[26] = {0};
@@ -250,7 +283,7 @@ void kasiski()
         }
         key[j] = ascii(topthree);
         printf("Key letter %d: %c\n", j + 1, key[j]);
-    }
+    }  
 
     printf("Do you want to edit the key?\n1)sim\n2}não\nEscolha: ");
     int choice = 0;
